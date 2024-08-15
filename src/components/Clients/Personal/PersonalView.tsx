@@ -22,10 +22,16 @@ const PersonalView: React.FC<FormDataProps> = ({
     <div className="flex flex-col gap-9">
       <div className="rounded-lg border border-stroke bg-white px-5 py-6 shadow-lg dark:border-strokedark dark:bg-boxdark">
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-2xl font-semibold text-indigo-600">
+          <h2 className="mb-3 text-2xl font-semibold text-black">
             Participant Information
           </h2>
-          <Button
+          <button
+            onClick={() => setIsEditPersonal(true)}
+            className="border-gray-400 text-gray-500 flex items-center rounded-full border px-3 py-1 transition hover:bg-indigo-100 hover:text-indigo-600"
+          >
+            <EditIcon className="mr-2" /> Edit
+          </button>
+          {/* <Button
             onClick={() => setIsEditPersonal(true)}
             size="small"
             variant="outlined"
@@ -43,7 +49,7 @@ const PersonalView: React.FC<FormDataProps> = ({
             }}
           >
             Edit
-          </Button>
+          </Button> */}
         </div>
         <div className="space-y-8">
           {/* Participant Details */}

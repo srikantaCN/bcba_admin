@@ -17,7 +17,6 @@ const PersonalViewModal: React.FC<PersonalViewModalProps> = ({
 
   return (
     <div>
-      <Button onClick={toggleDrawer(true)}>Open drawer</Button>
       <Drawer anchor="right" open={modalOpen} onClose={toggleDrawer(false)}>
         <div
           style={{

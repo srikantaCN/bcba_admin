@@ -1,37 +1,24 @@
 "use client";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { Grid } from "@mui/material";
 import { usePathname } from "next/navigation";
 
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { schoolSettings } from "@/utils/Clients";
-import { grades } from "@/utils/Clients";
-import FormView from "../PersonalView";
 import { formData } from "@/types/ClientPersonalInfo";
-import PersonalViewModal from "./PersonalFormModal";
+import PersonalViewModal from "./Personal/PersonalFormModal";
+import MedicalView from "./Medical/MedicalView";
+import MedicallViewModal from "./Medical/MedicalFormModal";
+import SchoolView from "./School/SchoolView";
+import SchoolFormModal from "./School/SchoolFormModal";
+import { Metadata } from "next";
+import Breadcrumb from "../Breadcrumbs/Breadcrumb";
+import DocumentView from "./Documents/DocumentView";
+import DocumentFormModal from "./Documents/DocumentFormModal";
+import PersonalView from "./Personal/PersonalView";
 
-interface Option {
-  id: string;
-  label: string;
-}
-
-const options: Option[] = [
-  { id: uuidv4(), label: "Yes" },
-  { id: uuidv4(), label: "No" },
-];
-
-interface serviceHistoryProps {
-  id: string;
-  providerName: string;
-  startDate: string;
-  endDate: string;
-  outcomes: string;
-}
+export const metadata: Metadata = {
+  title: "Client Info | Neuromnia",
+  description: "This is the page which displays the details of a client.",
+};
 
 const tabs = [
   {
@@ -50,34 +37,24 @@ const tabs = [
     name: "Documents",
     value: 4,
   },
-  {
-    name: "Others",
-    value: 5,
-  },
+  // {
+  //   name: "Others",
+  //   value: 5,
+  // },
 ];
 
 const ClientTabs: React.FC = () => {
   const paths = usePathname();
-  const initialAbaServiceHistory: serviceHistoryProps = {
-    id: uuidv4(),
-    providerName: "",
-    startDate: "",
-    endDate: "",
-    outcomes: "",
-  };
 
   const [openTab, setOpenTab] = useState<number | undefined>(1);
-  const [abaServicesHistory, setAbaServicesHistory] = useState([
-    initialAbaServiceHistory,
-  ]);
 
-  const [isChecked, setIsChecked] = useState<string>("");
   const [isEditPersonal, setIsEditPersonal] = useState<boolean>(false);
-  const [isRadioChecked, setIsRadioChecked] = useState<string>("");
-
-  const handleRadioChange = (value: string) => {
-    setIsRadioChecked(value);
-  };
+  const [isEditMedicalModalOpen, setIsEditMedicalModalOpen] =
+    useState<boolean>(false);
+  const [isEditSchoolModalOpen, setIsEditSchoolModalOpen] =
+    useState<boolean>(false);
+  const [isEditDocumentModalOpen, setIsEditDocumentModalOpen] =
+    useState<boolean>(false);
 
   const activeClasses = "text-primary border-blue-900";
   const inactiveClasses = "border-transparent";
@@ -93,20 +70,79 @@ const ClientTabs: React.FC = () => {
     parentPhone: "1234567890",
     parentEmail: "jane@example.com",
   };
-
-  const handleAddService = () => {
-    const newService = [...abaServicesHistory];
-    newService.push(initialAbaServiceHistory);
-    console.log("object", newService);
-    setAbaServicesHistory(newService);
+  const medicalData = {
+    medications: "Paracetamol, 500mg, Dr. John Doe",
+    medicalHistory: "Asthma, High Blood Pressure",
+    abaServicesHistory: [
+      {
+        id: uuidv4(),
+        providerName: "TheraCare",
+        startDate: "2022-01-10",
+        endDate: "2023-05-20",
+        outcomes:
+          "Significant improvement in communication and behavioral skills.",
+      },
+      {
+        id: uuidv4(),
+        providerName: "ABA Clinic",
+        startDate: "2021-06-15",
+        endDate: "2022-12-30",
+        outcomes: "Moderate progress in reducing repetitive behaviors.",
+      },
+      {
+        id: uuidv4(),
+        providerName: "Behavioral Health Services",
+        startDate: "2020-09-01",
+        endDate: "2021-05-15",
+        outcomes: "Noticeable improvement in social interactions with peers.",
+      },
+    ],
+    mentalHealthServices: "Mental Health Hospitalization - 2021",
+    otherServices: "Occupational therapy - 2 sessions/week",
+    coordinationOfCare: "Coordination with psychologist and speech therapist.",
   };
-
-  const handleDelete = (index: number) => {
-    console.log("called");
-    const newServices = [...abaServicesHistory];
-    const updatedServices = newServices.filter((_, i) => i !== index);
-    setAbaServicesHistory(updatedServices);
+  const schoolData = {
+    schoolType: ["Public School", "Special Education School"],
+    grade: ["4th Grade", "5th Grade"],
+    startEndTime: "8:00 AM - 3:00 PM",
+    schedule: "Monday to Friday, 8:00 AM - 3:00 PM",
+    totalHours: "35 hours",
+    hasIEP: true,
+    iepNotes:
+      "The student has shown significant improvement in social skills. Recommended to continue the current IEP plan.",
   };
+  const files = [
+    {
+      imageUrl:
+        "https://media.istockphoto.com/id/1359932120/vector/contract-document-icon-in-flat-style-report-with-folder-vector-illustration-on-isolated.jpg?s=612x612&w=0&k=20&c=eJUJzNLAWNHutYtNiX1x0ORNXMpOriOMH0S4aX0vUm0=",
+      fileUploadDate: "15/08/2024",
+      fileUploadType: "Interview Notes",
+    },
+    {
+      imageUrl:
+        "https://media.istockphoto.com/id/1359932120/vector/contract-document-icon-in-flat-style-report-with-folder-vector-illustration-on-isolated.jpg?s=612x612&w=0&k=20&c=eJUJzNLAWNHutYtNiX1x0ORNXMpOriOMH0S4aX0vUm0=",
+      fileUploadDate: "15/08/2024",
+      fileUploadType: "Interview Notes",
+    },
+    {
+      imageUrl:
+        "https://media.istockphoto.com/id/1359932120/vector/contract-document-icon-in-flat-style-report-with-folder-vector-illustration-on-isolated.jpg?s=612x612&w=0&k=20&c=eJUJzNLAWNHutYtNiX1x0ORNXMpOriOMH0S4aX0vUm0=",
+      fileUploadDate: "15/08/2024",
+      fileUploadType: "Interview Notes",
+    },
+    {
+      imageUrl:
+        "https://media.istockphoto.com/id/1359932120/vector/contract-document-icon-in-flat-style-report-with-folder-vector-illustration-on-isolated.jpg?s=612x612&w=0&k=20&c=eJUJzNLAWNHutYtNiX1x0ORNXMpOriOMH0S4aX0vUm0=",
+      fileUploadDate: "15/08/2024",
+      fileUploadType: "Interview Notes",
+    },
+    {
+      imageUrl:
+        "https://media.istockphoto.com/id/1359932120/vector/contract-document-icon-in-flat-style-report-with-folder-vector-illustration-on-isolated.jpg?s=612x612&w=0&k=20&c=eJUJzNLAWNHutYtNiX1x0ORNXMpOriOMH0S4aX0vUm0=",
+      fileUploadDate: "15/08/2024",
+      fileUploadType: "Interview Notes",
+    },
+  ];
 
   useEffect(() => {
     if (paths) {
@@ -131,7 +167,8 @@ const ClientTabs: React.FC = () => {
   }, [paths]);
   return (
     <>
-      <div className="mb-6 flex flex-wrap gap-5 border-b border-stroke dark:border-strokedark sm:gap-10">
+      <Breadcrumb pageName="Client Info" />
+      {/* <div className="mb-6 flex flex-wrap gap-5 border-b border-stroke dark:border-strokedark sm:gap-10">
         {tabs?.map((tab, index) => {
           return (
             <Link
@@ -146,377 +183,67 @@ const ClientTabs: React.FC = () => {
             </Link>
           );
         })}
-      </div>
+      </div> */}
+      <div className="flex flex-col gap-9">
+        <PersonalView
+          formData={formData}
+          setIsEditPersonal={setIsEditPersonal}
+        />
+        <MedicalView
+          {...medicalData}
+          setIsEditMedicalModalOpen={setIsEditMedicalModalOpen}
+        />
 
+        <SchoolView
+          schoolPlacement={schoolData}
+          setIsEditSchoolModalOpen={setIsEditSchoolModalOpen}
+        />
+        <DocumentView
+          files={files}
+          setIsDocumentModalOpen={setIsEditDocumentModalOpen}
+        />
+      </div>
+      <PersonalViewModal
+        modalOpen={isEditPersonal}
+        toggle={setIsEditPersonal}
+      />
+      <MedicallViewModal
+        modalOpen={isEditMedicalModalOpen}
+        toggle={setIsEditMedicalModalOpen}
+      />
+      <SchoolFormModal
+        modalOpen={isEditSchoolModalOpen}
+        toggle={setIsEditSchoolModalOpen}
+      />
+
+      <DocumentFormModal
+        modalOpen={isEditDocumentModalOpen}
+        toggle={setIsEditDocumentModalOpen}
+      />
       <div>
         <div
           className={`px-5 leading-relaxed ${
             openTab === 1 ? "block" : "hidden"
           }`}
-        >
-          <PersonalViewModal
-            modalOpen={isEditPersonal}
-            toggle={setIsEditPersonal}
-          />
-          <FormView formData={formData} setIsEditPersonal={setIsEditPersonal} />
-        </div>
+        ></div>
         <div
           className={`px-5 leading-relaxed ${
             openTab === 3 ? "block" : "hidden"
           }`}
-        >
-          <div className="flex flex-col gap-9">
-            <div className="rounded-lg border  border-stroke bg-white p-5 shadow-lg dark:border-strokedark dark:bg-boxdark">
-              <div className="mb-2 flex flex-col gap-6 xl:flex-row">
-                <div className="w-full">
-                  <label className="my-2 block text-sm font-medium text-black">
-                    Medications <span className="text-meta-1">*</span>
-                  </label>
-                  <span className="text-gray-600 text-sm">
-                    Include ALL medications (OTC, Psych meds or behavioral
-                    meds), dosage and prescribing physician.
-                  </span>
-                  <textarea
-                    placeholder="Medications"
-                    className="border-md ring-gray-300 mt-3 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                  />
-                </div>
-              </div>
-              <div className="mb-2 flex flex-col gap-6 xl:flex-row">
-                <div className="w-full">
-                  <label className="my-3 block text-sm font-medium text-black">
-                    Medical History <span className="text-meta-1">*</span>
-                  </label>
-                  <textarea
-                    placeholder="Medical History"
-                    className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col">
-                {abaServicesHistory.map((item, index, arr) => {
-                  return (
-                    <div
-                      key={item.id} // Unique key to avoid React warnings
-                    >
-                      <div className="mb-2 flex flex-col gap-6 xl:flex-row">
-                        <div className="w-full xl:w-1/3">
-                          <label className="my-3 block text-sm font-medium text-black">
-                            Provider Name
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="Enter Provider name"
-                            value={item.providerName}
-                            onChange={(e) => {
-                              const newServices = [...abaServicesHistory];
-                              newServices[index].providerName = e.target.value;
-                              setAbaServicesHistory(newServices);
-                            }}
-                            className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                          />
-                        </div>
-                        <div className="w-full xl:w-1/3">
-                          <label className="my-3 block text-sm font-medium text-black">
-                            Start Date
-                          </label>
-                          <input
-                            type="date"
-                            placeholder="Enter Start Date"
-                            value={item.startDate}
-                            onChange={(e) => {
-                              const newServices = [...abaServicesHistory];
-                              newServices[index].startDate = e.target.value;
-                              setAbaServicesHistory(newServices);
-                            }}
-                            className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                          />
-                        </div>
-                        <div className="w-full xl:w-1/3">
-                          <label className="my-3 block text-sm font-medium text-black">
-                            End Date
-                          </label>
-                          <input
-                            type="date"
-                            placeholder="Enter End Date"
-                            value={item.endDate}
-                            onChange={(e) => {
-                              const newServices = [...abaServicesHistory];
-                              newServices[index].endDate = e.target.value;
-                              setAbaServicesHistory(newServices);
-                            }}
-                            className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                          />
-                        </div>
-                      </div>
-                      <div className="my-4 w-full">
-                        <label className="my-3 block text-sm font-medium text-black">
-                          Outcomes
-                        </label>
-                        <textarea
-                          placeholder="Enter Outcomes"
-                          value={item.outcomes}
-                          onChange={(e) => {
-                            const newServices = [...abaServicesHistory];
-                            newServices[index].outcomes = e.target.value;
-                            setAbaServicesHistory(newServices);
-                          }}
-                          className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                        />
-                      </div>
-                      <div className="my-4 flex w-full justify-end gap-4 border-b p-4">
-                        {index !== 0 && (
-                          <button
-                            type="button"
-                            className="text-red-700 border-red-600 hover:bg-red-50 flex items-center rounded-lg border px-3 py-2 text-sm font-medium"
-                            onClick={() => handleDelete(index)}
-                          >
-                            <DeleteIcon className="mr-1" /> Delete
-                          </button>
-                        )}
-                        {index === arr.length - 1 && (
-                          <button
-                            type="button"
-                            className="flex items-center rounded-lg border border-blue-600 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50"
-                            onClick={handleAddService}
-                          >
-                            <AddIcon className="mr-1" /> Add Service
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="my-4 flex flex-col gap-6 xl:flex-row">
-                <div className="w-full">
-                  <label className="my-3 flex flex-col text-sm font-medium text-black">
-                    <span>Other Mental Health Services</span>
-                    <span className="text-gray-500">
-                      (Include any mental health hospitalizations)
-                    </span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter Provider name"
-                    className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                  />
-                </div>
-              </div>
-              <div className="my-4 w-full">
-                <label className="my-3 block text-sm font-medium text-black">
-                  Other Services
-                </label>
-                <textarea
-                  placeholder="• e.g., Occupational therapy, speech
-                                        therapy, physical therapy, feeding
-                                        therapy, etc.
-                                        • Include how many sessions per
-                                        week and how many hours overall.
-                                        • Indicate NA if none."
-                  className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                />
-              </div>
-              <div className="my-4 w-full">
-                <label className="my-3 flex flex-col text-sm font-medium text-black">
-                  <span>Coordination of care with other providers</span>
-                  <span className="text-gray-500">
-                    (Psychologists, psychiatrists, OT, SLP, PT, School
-                    personnel, etc.)
-                  </span>
-                </label>
-                <textarea
-                  placeholder="Enter end date"
-                  className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        ></div>
         <div
           className={`px-5 leading-relaxed ${
             openTab === 2 ? "block" : "hidden"
           }`}
-        >
-          <div className="mb-10 flex flex-col gap-9">
-            {/* <!-- Sign In Form --> */}
-            <div className="mb-5 rounded-lg border border-stroke bg-white px-5 shadow-lg dark:border-stroke  dark:bg-boxdark">
-              <label className="border-gray-500 my-3 block border-b-2 pb-3  text-lg font-medium text-black">
-                School Placement
-              </label>
-              <label className="my-3 block text-lg font-medium text-black">
-                School Type
-              </label>
-              <Grid container spacing={1} className="my-3 ">
-                {schoolSettings?.map((settings) => {
-                  return (
-                    <Grid item xs={4} className="my-4" key={settings?.id}>
-                      <label
-                        htmlFor="checkboxLabelOne"
-                        className="flex cursor-pointer select-none items-center"
-                      >
-                        <div className="">
-                          <input
-                            name={settings?.name}
-                            type="checkbox"
-                            id="checkboxLabelOne"
-                            className="border-md ring-gray-300 sr-only w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                            // value={isChecked}
-                            // onChange={() => {
-                            //   setIsChecked(!isChecked);
-                            // }}
-                          />
-                          <div
-                            className={`mr-4 flex h-5 w-5 items-center justify-center rounded border ${
-                              isChecked &&
-                              "border-blue-900 bg-gray dark:bg-transparent"
-                            }`}
-                          >
-                            <span
-                              className={`h-2.5 w-2.5 rounded-sm ${
-                                isChecked && "bg-blue-900"
-                              }`}
-                            ></span>
-                          </div>
-                        </div>
-                        {settings?.name}
-                      </label>
-                    </Grid>
-                  );
-                })}
-              </Grid>
-
-              <label className="my-3 block text-lg font-medium text-black">
-                Grade
-              </label>
-              <Grid container spacing={1} className="my-3 ">
-                {grades?.map((grade) => {
-                  return (
-                    <Grid item xs={2} className="my-4" key={grade?.id}>
-                      <label
-                        htmlFor="checkboxLabelOne"
-                        className="flex cursor-pointer select-none items-center"
-                      >
-                        <div className="">
-                          <input
-                            name={grade?.name}
-                            type="checkbox"
-                            id="checkboxLabelOne"
-                            className="border-md ring-gray-300 sr-only w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                            // value={isChecked}
-                            // onChange={() => {
-                            //   setIsChecked(!isChecked);
-                            // }}
-                          />
-                          <div
-                            className={`mr-4 flex h-5 w-5 items-center justify-center rounded border ${
-                              isChecked &&
-                              "border-blue-900 bg-gray dark:bg-transparent"
-                            }`}
-                          >
-                            <span
-                              className={`h-2.5 w-2.5 rounded-sm ${
-                                isChecked && "bg-blue-900"
-                              }`}
-                            ></span>
-                          </div>
-                        </div>
-                        {grade?.name}
-                      </label>
-                    </Grid>
-                  );
-                })}
-              </Grid>
-              <div className="my-4 flex flex-col gap-6 ">
-                <div className="w-full">
-                  <label className="my-3 block text-sm font-medium text-black">
-                    Start and end time of school hours
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter your name"
-                    className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                  />
-                </div>
-
-                <div className="w-full">
-                  <label className="my-3 block text-sm font-medium text-black">
-                    Schedule of academic activities
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Schedule of academic activities"
-                    className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                  />
-                </div>
-                <div className="w-full">
-                  <label className="my-3 block text-sm font-medium text-black">
-                    Total number of hours spent in school per week
-                  </label>
-                  <input
-                    type="tel"
-                    placeholder="Total number of hours spent in school per week"
-                    className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                  />
-                </div>
-                <div className="w-full">
-                  <label className="my-3 block text-sm font-medium text-black">
-                    Has IEP?
-                  </label>
-                  <div className="flex flex-wrap items-center gap-5.5">
-                    {options.map((option) => (
-                      <div key={option.id}>
-                        <label className="relative flex cursor-pointer select-none items-center gap-2 text-sm font-medium text-black dark:text-white">
-                          <input
-                            className="sr-only"
-                            type="radio"
-                            name="roleSelect"
-                            id={option.id}
-                            onChange={() => handleRadioChange(option.id)}
-                          />
-                          <span
-                            className={`flex h-5 w-5 items-center justify-center rounded-full border ${
-                              isRadioChecked === option.id
-                                ? "border-primary"
-                                : "border-body"
-                            }`}
-                          >
-                            <span
-                              className={`h-2.5 w-2.5 rounded-full bg-primary ${
-                                isRadioChecked === option.id ? "flex" : "hidden"
-                              }`}
-                            ></span>
-                          </span>
-                          {option.label}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="w-full">
-                    <label className="my-3 block text-sm font-medium text-black">
-                      IEP Notes
-                    </label>
-                    <textarea
-                      placeholder="IEP Notes"
-                      className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        ></div>
         <div>
           <div
-            className={`h-[600px] overflow-y-scroll px-5 leading-relaxed ${
+            className={`px-5 leading-relaxed ${
               openTab === 4 ? "block" : "hidden"
             }`}
           >
-            <div className="flex flex-col gap-9">
-              <div className="rounded-lg border border-stroke bg-white p-5 shadow-lg dark:border-strokedark dark:bg-boxdark"></div>
-            </div>
+            {/* Other sections of the modal... */}
           </div>
-          {/* Other sections of the modal... */}
         </div>
         <div
           className={`h-[600px] overflow-y-scroll px-5 leading-relaxed ${
