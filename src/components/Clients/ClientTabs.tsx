@@ -11,6 +11,19 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { schoolSettings } from "@/utils/Clients";
 import { grades } from "@/utils/Clients";
+import FormView from "../PersonalView";
+import { formData } from "@/types/ClientPersonalInfo";
+import PersonalViewModal from "./PersonalFormModal";
+
+interface Option {
+  id: string;
+  label: string;
+}
+
+const options: Option[] = [
+  { id: uuidv4(), label: "Yes" },
+  { id: uuidv4(), label: "No" },
+];
 
 interface serviceHistoryProps {
   id: string;
@@ -57,10 +70,29 @@ const ClientTabs: React.FC = () => {
   const [abaServicesHistory, setAbaServicesHistory] = useState([
     initialAbaServiceHistory,
   ]);
-  const [isChecked, setIsChecked] = useState(false);
+
+  const [isChecked, setIsChecked] = useState<string>("");
+  const [isEditPersonal, setIsEditPersonal] = useState<boolean>(false);
+  const [isRadioChecked, setIsRadioChecked] = useState<string>("");
+
+  const handleRadioChange = (value: string) => {
+    setIsRadioChecked(value);
+  };
 
   const activeClasses = "text-primary border-blue-900";
   const inactiveClasses = "border-transparent";
+
+  const formData: formData = {
+    participantName: "John Doe",
+    dateOfBirth: "1990-01-01",
+    dateOfInitialAssessment: "2023-06-01",
+    dateOfCurrentReassessment: "2024-06-01",
+    currentFamilyStructure: "Two-parent Household",
+    otherHouseholdDetails: "Additional details about the household",
+    parentName: "Jane Doe",
+    parentPhone: "1234567890",
+    parentEmail: "jane@example.com",
+  };
 
   const handleAddService = () => {
     const newService = [...abaServicesHistory];
@@ -118,120 +150,23 @@ const ClientTabs: React.FC = () => {
 
       <div>
         <div
-          className={`h-[600px] overflow-y-scroll px-5 leading-relaxed ${
+          className={`px-5 leading-relaxed ${
             openTab === 1 ? "block" : "hidden"
           }`}
         >
-          <div className="flex flex-col gap-9">
-            <div className="rounded-lg border  border-stroke bg-white px-5 shadow-lg dark:border-strokedark dark:bg-boxdark">
-              <div className="p-6.5">
-                <div className="my-4 flex flex-col gap-6 xl:flex-row">
-                  <div className="w-full xl:w-1/2">
-                    <label className="my-3 block text-sm font-medium text-black">
-                      Participant Name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Enter your name"
-                      className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                    />
-                  </div>
-
-                  <div className="w-full xl:w-1/2">
-                    <label className="my-3 block text-sm font-medium text-black">
-                      Date of Birth
-                    </label>
-                    <input
-                      type="date"
-                      placeholder="Enter your DOB"
-                      className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                    />
-                  </div>
-                </div>
-
-                <div className="my-4 flex flex-col gap-6 xl:flex-row">
-                  <div className="w-full xl:w-1/2">
-                    <label className="my-3 block text-sm font-medium text-black">
-                      Date of Initial Assessment
-                    </label>
-                    <input
-                      type="date"
-                      placeholder="Choose a date"
-                      className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                    />
-                  </div>
-
-                  <div className="w-full xl:w-1/2">
-                    <label className="my-3 block text-sm font-medium text-black">
-                      Date of Current Reassessment
-                    </label>
-                    <input
-                      type="date"
-                      placeholder="Choose a date"
-                      className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                    />
-                  </div>
-                </div>
-
-                <label className="border-gray-500 my-4 block border-b-2 pb-3 text-lg font-medium text-black">
-                  Parent/Guardian Contact
-                </label>
-                <div className="my-4 flex flex-col gap-6 xl:flex-row ">
-                  <div className="w-full xl:w-1/3">
-                    <label className="mb-3 block text-sm font-medium text-black">
-                      Name <span className="text-meta-1">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Enter your Parent's Name"
-                      className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                    />
-                  </div>
-                  <div className="w-full xl:w-1/3">
-                    <label className="mb-3 block text-sm font-medium text-black">
-                      Phone <span className="text-meta-1">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="Enter Contact Number"
-                      className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                    />
-                  </div>
-                  <div className="w-full xl:w-1/3">
-                    <label className="mb-3 block text-sm font-medium text-black">
-                      Email <span className="text-meta-1">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      placeholder="Enter your email address"
-                      className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <PersonalViewModal
+            modalOpen={isEditPersonal}
+            toggle={setIsEditPersonal}
+          />
+          <FormView formData={formData} setIsEditPersonal={setIsEditPersonal} />
         </div>
         <div
-          className={`h-[600px] overflow-y-scroll   px-5 leading-relaxed ${
+          className={`px-5 leading-relaxed ${
             openTab === 3 ? "block" : "hidden"
           }`}
         >
           <div className="flex flex-col gap-9">
             <div className="rounded-lg border  border-stroke bg-white p-5 shadow-lg dark:border-strokedark dark:bg-boxdark">
-              <div className="mb-2 flex flex-col gap-6 xl:flex-row">
-                <div className="w-full">
-                  <label className="my-3 block text-sm font-medium text-black">
-                    Current Family Structure{" "}
-                    <span className="text-meta-1">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Current Family Structure"
-                    className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
-                  />
-                </div>
-              </div>
               <div className="mb-2 flex flex-col gap-6 xl:flex-row">
                 <div className="w-full">
                   <label className="my-2 block text-sm font-medium text-black">
@@ -258,11 +193,148 @@ const ClientTabs: React.FC = () => {
                   />
                 </div>
               </div>
+              <div className="flex flex-col">
+                {abaServicesHistory.map((item, index, arr) => {
+                  return (
+                    <div
+                      key={item.id} // Unique key to avoid React warnings
+                    >
+                      <div className="mb-2 flex flex-col gap-6 xl:flex-row">
+                        <div className="w-full xl:w-1/3">
+                          <label className="my-3 block text-sm font-medium text-black">
+                            Provider Name
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Enter Provider name"
+                            value={item.providerName}
+                            onChange={(e) => {
+                              const newServices = [...abaServicesHistory];
+                              newServices[index].providerName = e.target.value;
+                              setAbaServicesHistory(newServices);
+                            }}
+                            className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                          />
+                        </div>
+                        <div className="w-full xl:w-1/3">
+                          <label className="my-3 block text-sm font-medium text-black">
+                            Start Date
+                          </label>
+                          <input
+                            type="date"
+                            placeholder="Enter Start Date"
+                            value={item.startDate}
+                            onChange={(e) => {
+                              const newServices = [...abaServicesHistory];
+                              newServices[index].startDate = e.target.value;
+                              setAbaServicesHistory(newServices);
+                            }}
+                            className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                          />
+                        </div>
+                        <div className="w-full xl:w-1/3">
+                          <label className="my-3 block text-sm font-medium text-black">
+                            End Date
+                          </label>
+                          <input
+                            type="date"
+                            placeholder="Enter End Date"
+                            value={item.endDate}
+                            onChange={(e) => {
+                              const newServices = [...abaServicesHistory];
+                              newServices[index].endDate = e.target.value;
+                              setAbaServicesHistory(newServices);
+                            }}
+                            className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                          />
+                        </div>
+                      </div>
+                      <div className="my-4 w-full">
+                        <label className="my-3 block text-sm font-medium text-black">
+                          Outcomes
+                        </label>
+                        <textarea
+                          placeholder="Enter Outcomes"
+                          value={item.outcomes}
+                          onChange={(e) => {
+                            const newServices = [...abaServicesHistory];
+                            newServices[index].outcomes = e.target.value;
+                            setAbaServicesHistory(newServices);
+                          }}
+                          className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                        />
+                      </div>
+                      <div className="my-4 flex w-full justify-end gap-4 border-b p-4">
+                        {index !== 0 && (
+                          <button
+                            type="button"
+                            className="text-red-700 border-red-600 hover:bg-red-50 flex items-center rounded-lg border px-3 py-2 text-sm font-medium"
+                            onClick={() => handleDelete(index)}
+                          >
+                            <DeleteIcon className="mr-1" /> Delete
+                          </button>
+                        )}
+                        {index === arr.length - 1 && (
+                          <button
+                            type="button"
+                            className="flex items-center rounded-lg border border-blue-600 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50"
+                            onClick={handleAddService}
+                          >
+                            <AddIcon className="mr-1" /> Add Service
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="my-4 flex flex-col gap-6 xl:flex-row">
+                <div className="w-full">
+                  <label className="my-3 flex flex-col text-sm font-medium text-black">
+                    <span>Other Mental Health Services</span>
+                    <span className="text-gray-500">
+                      (Include any mental health hospitalizations)
+                    </span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter Provider name"
+                    className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
+                  />
+                </div>
+              </div>
+              <div className="my-4 w-full">
+                <label className="my-3 block text-sm font-medium text-black">
+                  Other Services
+                </label>
+                <textarea
+                  placeholder="• e.g., Occupational therapy, speech
+                                        therapy, physical therapy, feeding
+                                        therapy, etc.
+                                        • Include how many sessions per
+                                        week and how many hours overall.
+                                        • Indicate NA if none."
+                  className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
+                />
+              </div>
+              <div className="my-4 w-full">
+                <label className="my-3 flex flex-col text-sm font-medium text-black">
+                  <span>Coordination of care with other providers</span>
+                  <span className="text-gray-500">
+                    (Psychologists, psychiatrists, OT, SLP, PT, School
+                    personnel, etc.)
+                  </span>
+                </label>
+                <textarea
+                  placeholder="Enter end date"
+                  className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
+                />
+              </div>
             </div>
           </div>
         </div>
         <div
-          className={`h-[600px] overflow-y-scroll   px-5 leading-relaxed ${
+          className={`px-5 leading-relaxed ${
             openTab === 2 ? "block" : "hidden"
           }`}
         >
@@ -387,6 +459,49 @@ const ClientTabs: React.FC = () => {
                     className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
                   />
                 </div>
+                <div className="w-full">
+                  <label className="my-3 block text-sm font-medium text-black">
+                    Has IEP?
+                  </label>
+                  <div className="flex flex-wrap items-center gap-5.5">
+                    {options.map((option) => (
+                      <div key={option.id}>
+                        <label className="relative flex cursor-pointer select-none items-center gap-2 text-sm font-medium text-black dark:text-white">
+                          <input
+                            className="sr-only"
+                            type="radio"
+                            name="roleSelect"
+                            id={option.id}
+                            onChange={() => handleRadioChange(option.id)}
+                          />
+                          <span
+                            className={`flex h-5 w-5 items-center justify-center rounded-full border ${
+                              isRadioChecked === option.id
+                                ? "border-primary"
+                                : "border-body"
+                            }`}
+                          >
+                            <span
+                              className={`h-2.5 w-2.5 rounded-full bg-primary ${
+                                isRadioChecked === option.id ? "flex" : "hidden"
+                              }`}
+                            ></span>
+                          </span>
+                          {option.label}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="w-full">
+                    <label className="my-3 block text-sm font-medium text-black">
+                      IEP Notes
+                    </label>
+                    <textarea
+                      placeholder="IEP Notes"
+                      className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600 "
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -398,102 +513,7 @@ const ClientTabs: React.FC = () => {
             }`}
           >
             <div className="flex flex-col gap-9">
-              <div className="rounded-lg border border-stroke bg-white p-5 shadow-lg dark:border-strokedark dark:bg-boxdark">
-                <div className="flex flex-col">
-                  {abaServicesHistory.map((item, index, arr) => {
-                    return (
-                      <div
-                        key={item.id} // Unique key to avoid React warnings
-                        className="border-gray-200 mb-4 flex flex-col gap-4 rounded-lg border p-4"
-                      >
-                        <div className="w-full xl:w-1/3">
-                          <label className="my-3 block text-sm font-medium text-black">
-                            Provider Name
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="Enter Provider name"
-                            value={item.providerName}
-                            onChange={(e) => {
-                              const newServices = [...abaServicesHistory];
-                              newServices[index].providerName = e.target.value;
-                              setAbaServicesHistory(newServices);
-                            }}
-                            className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                          />
-                        </div>
-                        <div className="w-full xl:w-1/3">
-                          <label className="my-3 block text-sm font-medium text-black">
-                            Start Date
-                          </label>
-                          <input
-                            type="date"
-                            placeholder="Enter Start Date"
-                            value={item.startDate}
-                            onChange={(e) => {
-                              const newServices = [...abaServicesHistory];
-                              newServices[index].startDate = e.target.value;
-                              setAbaServicesHistory(newServices);
-                            }}
-                            className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                          />
-                        </div>
-                        <div className="w-full xl:w-1/3">
-                          <label className="my-3 block text-sm font-medium text-black">
-                            End Date
-                          </label>
-                          <input
-                            type="date"
-                            placeholder="Enter End Date"
-                            value={item.endDate}
-                            onChange={(e) => {
-                              const newServices = [...abaServicesHistory];
-                              newServices[index].endDate = e.target.value;
-                              setAbaServicesHistory(newServices);
-                            }}
-                            className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                          />
-                        </div>
-                        <div className="my-4">
-                          <label className="my-3 block text-sm font-medium text-black">
-                            Outcomes
-                          </label>
-                          <textarea
-                            placeholder="Enter Outcomes"
-                            value={item.outcomes}
-                            onChange={(e) => {
-                              const newServices = [...abaServicesHistory];
-                              newServices[index].outcomes = e.target.value;
-                              setAbaServicesHistory(newServices);
-                            }}
-                            className="border-md ring-gray-300 w-full rounded-lg border-stroke bg-transparent px-5 py-3 text-black outline-none ring-1 ring-inset transition focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                          />
-                        </div>
-                        <div className="flex justify-end gap-4">
-                          {index !== 0 && (
-                            <button
-                              type="button"
-                              className="text-red-600 border-red-600 hover:bg-red-50 flex items-center rounded-lg border px-3 py-2 text-sm font-medium"
-                              onClick={() => handleDelete(index)}
-                            >
-                              <DeleteIcon className="mr-1" /> Delete
-                            </button>
-                          )}
-                          {index === arr.length - 1 && (
-                            <button
-                              type="button"
-                              className="flex items-center rounded-lg border border-blue-600 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50"
-                              onClick={handleAddService}
-                            >
-                              <AddIcon className="mr-1" /> Add Service
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+              <div className="rounded-lg border border-stroke bg-white p-5 shadow-lg dark:border-strokedark dark:bg-boxdark"></div>
             </div>
           </div>
           {/* Other sections of the modal... */}
